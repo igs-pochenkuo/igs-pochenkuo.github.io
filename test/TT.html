@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>URL 檢查結果</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    /* 狀態圖示的基本樣式 */
+    .status-circle {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+    /* 成功的綠色圖示 */
+    .status-success {
+      background-color: green;
+    }
+    /* 失敗的紅色圖示 */
+    .status-failure {
+      background-color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>URL 檢查結果</h1>
+  <table id="resultTable">
+    <thead>
+      <tr>
+        <th>URL</th>
+        <th>狀態</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- 程式將在此加入檢查結果 -->
+    </tbody>
+  </table>
+
+  <script>
+    // 要檢查的 URL 列表
+    const urls = [
+      "https://ps-patch.irichgames.com/Game/PSMD/test/hello.txt",
+      "https://ps-patch.irich-games.com/Game/PSMD/test/hello.txt",
+      "https://ps-patch.irichgame.com/Game/PSMD/test/hello.txt",
+      "https://ps-patch.irichplay.com/Game/PSMD/test/hello.txt",
+      "https://ps-patch.irichvip.com/Game/PSMD/test/hello.txt",
+      "https://ps-patch.irich-vip.com/Game/PSMD/test/hello.txt",
+      "https://ps-patch.best777casino.com/Game/PSMD/test/hello.txt",
+      "https://ps-patch.bet777fun.com/Game/PSMD/test/hello.txt",
+      "https://ps-patch.best777games.com/Game/PSMD/test/hello.txt",
+      "https://ps-patch.bet777vvip.com/Game/PSMD/test/hello.txt",
+      "https://ps-patch.bet777-vip.com/Game/PSMD/test/hello.txt",
+      "https://ps-patch.b37vip.com/Game/PSMD/test/hello.txt"
+    ];
+
+    // 檢查單一 URL 是否能夠存取
+    async function checkURL(url) {
+      try {
+        // 使用 no-cors 模式避免跨來源限制，注意此模式下無法取得詳細狀態碼
+        await fetch(url, { mode: 'no-cors' });
+        return "成功";
+      } catch (error) {
+        return "失敗";
+      }
+    }
+
+    // 檢查所有 URL 並更新表格
+    async function checkAllURLs() {
+      const tbody = document.querySelector("#resultTable tbody");
+      for (const url of urls) {
+        const status = await checkURL(url);
+
+        // 建立表格列
+        const tr = document.createElement("tr");
+
+        // URL 欄位
+        const tdUrl = document.createElement("td");
+        tdUrl.textContent = url;
+
+        // 狀態欄位，包含圖示與文字
+        const tdStatus = document.createElement("td");
+        const statusIcon = document.createElement("span");
+        statusIcon.classList.add("status-circle");
+        if (status === "成功") {
+          statusIcon.classList.add("status-success");
+        } else {
+          statusIcon.classList.add("status-failure");
+        }
+        tdStatus.appendChild(statusIcon);
+        tdStatus.appendChild(document.createTextNode(status));
+
+        tr.appendChild(tdUrl);
+        tr.appendChild(tdStatus);
+        tbody.appendChild(tr);
+      }
+    }
+
+    // 當網頁載入完成後開始檢查
+    window.onload = checkAllURLs;
+  </script>
+</body>
+</html>
