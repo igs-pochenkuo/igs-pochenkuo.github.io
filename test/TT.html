@@ -2,48 +2,232 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>URL 檢查結果</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      text-align: center;
+      margin: 30px 0;
+      color: #2c3e50;
+      font-weight: 700;
+      font-size: 2.2rem;
+      position: relative;
+      padding-bottom: 15px;
+    }
+    
+    h1:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, #3498db, #2ecc71);
+      border-radius: 2px;
+    }
+    
+    .container {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+    
     table {
       border-collapse: collapse;
       width: 100%;
+      background-color: white;
     }
+    
     th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
+      padding: 15px;
       text-align: left;
+      border-bottom: 1px solid #eee;
     }
+    
+    th {
+      background-color: #3498db;
+      color: white;
+      font-weight: 500;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+    
+    tr:hover {
+      background-color: #f5f9ff;
+    }
+    
     /* 狀態圖示的基本樣式 */
     .status-circle {
       display: inline-block;
       width: 12px;
       height: 12px;
       border-radius: 50%;
-      margin-right: 5px;
+      margin-right: 10px;
+      position: relative;
+      top: 1px;
     }
+    
     /* 成功的綠色圖示 */
     .status-success {
-      background-color: green;
+      background-color: #2ecc71;
+      box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.2);
     }
+    
     /* 失敗的紅色圖示 */
     .status-failure {
-      background-color: red;
+      background-color: #e74c3c;
+      box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+    }
+    
+    .status-text {
+      font-weight: 500;
+    }
+    
+    .success-text {
+      color: #27ae60;
+    }
+    
+    .failure-text {
+      color: #c0392b;
+    }
+    
+    .url-cell {
+      word-break: break-all;
+      font-family: monospace;
+      font-size: 0.9rem;
+      color: #34495e;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 30px;
+      font-size: 1.2rem;
+      color: #7f8c8d;
+    }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border: 3px solid rgba(52, 152, 219, 0.3);
+      border-radius: 50%;
+      border-top-color: #3498db;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .summary {
+      display: flex;
+      justify-content: space-around;
+      margin: 20px 0;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    }
+    
+    .summary-item {
+      text-align: center;
+    }
+    
+    .summary-value {
+      font-size: 2rem;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    .success-value {
+      color: #2ecc71;
+    }
+    
+    .failure-value {
+      color: #e74c3c;
+    }
+    
+    .summary-label {
+      font-size: 0.9rem;
+      color: #7f8c8d;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      
+      th, td {
+        padding: 10px;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
     }
   </style>
 </head>
 <body>
   <h1>URL 檢查結果</h1>
-  <table id="resultTable">
-    <thead>
-      <tr>
-        <th>URL</th>
-        <th>狀態</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- 程式將在此加入檢查結果 -->
-    </tbody>
-  </table>
+  
+  <div class="summary" id="summary">
+    <div class="summary-item">
+      <span class="summary-value" id="totalCount">0</span>
+      <span class="summary-label">總計</span>
+    </div>
+    <div class="summary-item">
+      <span class="summary-value success-value" id="successCount">0</span>
+      <span class="summary-label">成功</span>
+    </div>
+    <div class="summary-item">
+      <span class="summary-value failure-value" id="failureCount">0</span>
+      <span class="summary-label">失敗</span>
+    </div>
+  </div>
+  
+  <div class="container">
+    <table id="resultTable">
+      <thead>
+        <tr>
+          <th>URL</th>
+          <th>狀態</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="2" class="loading">
+            <div class="loading-spinner"></div>
+            正在檢查 URL，請稍候...
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <script>
     // 要檢查的 URL 列表
@@ -66,13 +250,19 @@
       "https://cdn.b37vip.com/app/psmd/test/hello.txt"
     ];
 
+    // 統計數據
+    let successCount = 0;
+    let failureCount = 0;
+
     // 檢查單一 URL 是否能夠存取
     async function checkURL(url) {
       try {
         // 使用 no-cors 模式避免跨來源限制，注意此模式下無法取得詳細狀態碼
         await fetch(url, { mode: 'no-cors' });
+        successCount++;
         return "成功";
       } catch (error) {
+        failureCount++;
         return "失敗";
       }
     }
@@ -80,6 +270,9 @@
     // 檢查所有 URL 並更新表格
     async function checkAllURLs() {
       const tbody = document.querySelector("#resultTable tbody");
+      // 清空載入中的訊息
+      tbody.innerHTML = '';
+      
       for (const url of urls) {
         const status = await checkURL(url);
 
@@ -88,24 +281,43 @@
 
         // URL 欄位
         const tdUrl = document.createElement("td");
+        tdUrl.className = "url-cell";
         tdUrl.textContent = url;
 
         // 狀態欄位，包含圖示與文字
         const tdStatus = document.createElement("td");
         const statusIcon = document.createElement("span");
         statusIcon.classList.add("status-circle");
+        
+        const statusText = document.createElement("span");
+        statusText.classList.add("status-text");
+        statusText.textContent = status;
+        
         if (status === "成功") {
           statusIcon.classList.add("status-success");
+          statusText.classList.add("success-text");
         } else {
           statusIcon.classList.add("status-failure");
+          statusText.classList.add("failure-text");
         }
+        
         tdStatus.appendChild(statusIcon);
-        tdStatus.appendChild(document.createTextNode(status));
+        tdStatus.appendChild(statusText);
 
         tr.appendChild(tdUrl);
         tr.appendChild(tdStatus);
         tbody.appendChild(tr);
+        
+        // 更新統計數據
+        updateSummary();
       }
+    }
+    
+    // 更新統計摘要
+    function updateSummary() {
+      document.getElementById("totalCount").textContent = successCount + failureCount;
+      document.getElementById("successCount").textContent = successCount;
+      document.getElementById("failureCount").textContent = failureCount;
     }
 
     // 當網頁載入完成後開始檢查
