@@ -177,6 +177,24 @@
       letter-spacing: 1px;
     }
     
+    .response-time {
+      font-family: monospace;
+      font-weight: 500;
+      color: #7f8c8d;
+    }
+    
+    .fast-time {
+      color: #27ae60;
+    }
+    
+    .medium-time {
+      color: #f39c12;
+    }
+    
+    .slow-time {
+      color: #e74c3c;
+    }
+    
     @media (max-width: 768px) {
       body {
         padding: 10px;
@@ -208,6 +226,10 @@
       <span class="summary-value failure-value" id="failureCount">0</span>
       <span class="summary-label">失敗</span>
     </div>
+    <div class="summary-item">
+      <span class="summary-value" id="avgResponseTime">0</span>
+      <span class="summary-label">平均回應時間 (ms)</span>
+    </div>
   </div>
   
   <div class="container">
@@ -216,11 +238,12 @@
         <tr>
           <th>URL</th>
           <th>狀態</th>
+          <th>回應時間 (ms)</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td colspan="2" class="loading">
+          <td colspan="3" class="loading">
             <div class="loading-spinner"></div>
             正在檢查 URL，請稍候...
           </td>
@@ -253,18 +276,36 @@
     // 統計數據
     let successCount = 0;
     let failureCount = 0;
+    let totalResponseTime = 0;
+    let successfulRequests = 0;
 
     // 檢查單一 URL 是否能夠存取
     async function checkURL(url) {
+      const startTime = performance.now();
+      let responseTime = 0;
+      let status = "失敗";
+      
       try {
         // 使用 no-cors 模式避免跨來源限制，注意此模式下無法取得詳細狀態碼
         await fetch(url, { mode: 'no-cors' });
+        const endTime = performance.now();
+        responseTime = Math.round(endTime - startTime);
+        
         successCount++;
-        return "成功";
+        status = "成功";
+        
+        // 只計算成功請求的回應時間
+        totalResponseTime += responseTime;
+        successfulRequests++;
       } catch (error) {
         failureCount++;
-        return "失敗";
+        responseTime = 0; // 失敗時回應時間設為0
       }
+      
+      return {
+        status: status,
+        responseTime: responseTime
+      };
     }
 
     // 檢查所有 URL 並更新表格
@@ -274,7 +315,7 @@
       tbody.innerHTML = '';
       
       for (const url of urls) {
-        const status = await checkURL(url);
+        const result = await checkURL(url);
 
         // 建立表格列
         const tr = document.createElement("tr");
@@ -291,9 +332,9 @@
         
         const statusText = document.createElement("span");
         statusText.classList.add("status-text");
-        statusText.textContent = status;
+        statusText.textContent = result.status;
         
-        if (status === "成功") {
+        if (result.status === "成功") {
           statusIcon.classList.add("status-success");
           statusText.classList.add("success-text");
         } else {
@@ -303,9 +344,29 @@
         
         tdStatus.appendChild(statusIcon);
         tdStatus.appendChild(statusText);
+        
+        // 回應時間欄位
+        const tdResponseTime = document.createElement("td");
+        tdResponseTime.classList.add("response-time");
+        
+        if (result.status === "成功") {
+          tdResponseTime.textContent = `${result.responseTime}`;
+          
+          // 根據回應時間添加不同的顏色
+          if (result.responseTime < 200) {
+            tdResponseTime.classList.add("fast-time");
+          } else if (result.responseTime < 500) {
+            tdResponseTime.classList.add("medium-time");
+          } else {
+            tdResponseTime.classList.add("slow-time");
+          }
+        } else {
+          tdResponseTime.textContent = "—";
+        }
 
         tr.appendChild(tdUrl);
         tr.appendChild(tdStatus);
+        tr.appendChild(tdResponseTime);
         tbody.appendChild(tr);
         
         // 更新統計數據
@@ -318,6 +379,10 @@
       document.getElementById("totalCount").textContent = successCount + failureCount;
       document.getElementById("successCount").textContent = successCount;
       document.getElementById("failureCount").textContent = failureCount;
+      
+      // 計算並顯示平均回應時間
+      const avgTime = successfulRequests > 0 ? Math.round(totalResponseTime / successfulRequests) : 0;
+      document.getElementById("avgResponseTime").textContent = avgTime;
     }
 
     // 當網頁載入完成後開始檢查
