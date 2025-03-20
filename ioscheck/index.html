@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iOS Device Identifier</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #info {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h1>iOS Device Identifier Tool</h1>
+  <p>Click the button below to check if you're using an iOS device.</p>
+  <button id="checkDevice">Check Device</button>
+  <div id="info"></div>
+
+  <script>
+    document.getElementById('checkDevice').addEventListener('click', () => {
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+
+      const infoDiv = document.getElementById('info');
+      if (isIOS) {
+        infoDiv.innerHTML = '<strong>Device:</strong> iOS Device detected.<br><strong>User Agent:</strong> ' + userAgent;
+      } else {
+        infoDiv.innerHTML = 'This is not an iOS device.';
+      }
+    });
+  </script>
+</body>
+</html>
