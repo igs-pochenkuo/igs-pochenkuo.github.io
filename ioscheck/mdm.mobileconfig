@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>PayloadContent</key>
+    <array>
+      <dict>
+        <key>PayloadType</key>
+        <string>com.apple.mdm</string>
+        <key>PayloadVersion</key>
+        <integer>1</integer>
+        <key>PayloadIdentifier</key>
+        <string>com.example.mdm</string>
+        <key>PayloadUUID</key>
+        <string>12345678-1234-1234-1234-1234567890ab</string>
+        <key>PayloadDisplayName</key>
+        <string>Example MDM</string>
+        <key>PayloadDescription</key>
+        <string>Mobile Device Management Configuration</string>
+        <key>PayloadOrganization</key>
+        <string>Example Organization</string>
+        <key>ServerURL</key>
+<string>https://igs-pochenkuo.github.io/ioscheck/</string>
+        <key>CheckInURL</key>
+<string>https://igs-pochenkuo.github.io/ioscheck/</string>
+        <key>Topic</key>
+        <string>com.apple.mgmt.External</string>
+        <key>AccessRights</key>
+        <integer>8191</integer>
+      </dict>
+    </array>
+    <key>PayloadType</key>
+    <string>Configuration</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+    <key>PayloadIdentifier</key>
+    <string>com.example.configuration</string>
+    <key>PayloadUUID</key>
+    <string>87654321-4321-4321-4321-0987654321ba</string>
+    <key>PayloadDisplayName</key>
+    <string>Example Configuration</string>
+    <key>PayloadDescription</key>
+    <string>Configuration for MDM enrollment</string>
+    <key>PayloadOrganization</key>
+    <string>Example Organization</string>
+  </dict>
+</plist>

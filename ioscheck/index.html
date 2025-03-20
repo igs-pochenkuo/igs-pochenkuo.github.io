@@ -19,20 +19,22 @@
 </head>
 <body>
   <h1>iOS Device Identifier Tool</h1>
-  <p>Click the button below to check if you're using an iOS device.</p>
-  <button id="checkDevice">Check Device</button>
-  <div id="info"></div>
+    <p>If you have not authorized MDM, please authorize it first. If authorized, your device Identifier will be displayed.</p>
+    <button id="checkAuthorization">Check Authorization</button>
+    <div id="info"></div>
 
   <script>
-    document.getElementById('checkDevice').addEventListener('click', () => {
-      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-      const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
-
+    document.getElementById('checkAuthorization').addEventListener('click', () => {
       const infoDiv = document.getElementById('info');
-      if (isIOS) {
-        infoDiv.innerHTML = '<strong>Device:</strong> iOS Device detected.<br><strong>User Agent:</strong> ' + userAgent;
+      
+      // Simulate checking MDM authorization
+      const isAuthorized = false; // Replace with actual MDM authorization check logic
+      
+      if (isAuthorized) {
+        const deviceIdentifier = '12345-ABCDE'; // Replace with actual logic to fetch device Identifier
+        infoDiv.innerHTML = '<strong>MDM Authorized:</strong> Yes<br><strong>Device Identifier:</strong> ' + deviceIdentifier;
       } else {
-        infoDiv.innerHTML = 'This is not an iOS device.';
+        infoDiv.innerHTML = '<strong>MDM Authorized:</strong> No<br>Please authorize MDM by installing the configuration file.';
       }
     });
   </script>
